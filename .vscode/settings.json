@@ -51,5 +51,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Pirates.sln"
+    "dotnet.defaultSolution": "Pirates.sln",
+    "commentTranslate.targetLanguage": "ru"
 }

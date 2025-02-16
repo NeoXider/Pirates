@@ -3,15 +3,20 @@ using UnityEngine;
 public class Flashlight : MonoBehaviour, IUsable
 {
     [SerializeField]
-    private GameObject lightObject; // Объект, отвечающий за освещение (например, компонент Light)
+    private GameObject[] lightObjects; // Объекты, отвечающий за освещение (например, компонент Light)
 
-    private bool isOn = false;
+    public bool isOn = false;
 
     private void Start()
     {
-        if (lightObject != null)
+        Activate(isOn);
+    }
+
+    private void Activate(bool activate)
+    {
+        for (int i = 0; i < lightObjects.Length; i++)
         {
-            lightObject.SetActive(isOn);
+            lightObjects[i].SetActive(activate);
         }
     }
 
@@ -21,14 +26,11 @@ public class Flashlight : MonoBehaviour, IUsable
     public void Use()
     {
         isOn = !isOn;
-        if (lightObject != null)
-        {
-            lightObject.SetActive(isOn);
-        }
-        else
-        {
-            // Если отдельно не назначен объект для света, переключаем активность самого объекта
-            gameObject.SetActive(isOn);
-        }
+        Activate(isOn);
+    }
+
+    void OnValidate()
+    {
+        Activate(isOn);
     }
 } 

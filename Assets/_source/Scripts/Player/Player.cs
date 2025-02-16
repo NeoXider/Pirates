@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(HealthSystem))]
 public class Player : MonoBehaviour
 {
     public static Player Instance { get; private set; }
@@ -8,16 +9,21 @@ public class Player : MonoBehaviour
     public HealthSystem healthSystem;
 
     [SerializeField]
-    private float interactRange = 2f; // Радиус взаимодействия с объектами
+    private float interactRange = 4; // Радиус взаимодействия с объектами
 
     [SerializeField]
     private Transform handTransform; // Точка, куда помещается подобранный объект
 
     [SerializeField]
-    private KeyCode pickupKey = KeyCode.E;      // Клавиша для подбирания и выбрасывания
-    [SerializeField]
-    private KeyCode useKey = KeyCode.Mouse1;     // Клавиша для использования (правая кнопка мыши)
+    private KeyCode pickupKey = KeyCode.E;      // Клавиша для подбирания
 
+    [SerializeField]
+    private KeyCode dropKey = KeyCode.G;      // Клавиша для выбрасывания
+
+    [SerializeField]
+    private KeyCode useKey = KeyCode.Mouse0;     // Клавиша для использования (левая кнопка мыши)
+
+    [SerializeField]
     private GameObject currentHeldItem;
 
     private void Awake()
@@ -33,16 +39,18 @@ public class Player : MonoBehaviour
             RestartCurrentScene();
         }
 
-        // Если нажата клавиша подбирания/выбрасывания (E)
+        // Если нажата клавиша подбирания
         if (Input.GetKeyDown(pickupKey))
+        {
+            AttemptPickup();
+        }
+
+        // Если нажата клавиша выбрасывания
+        if (Input.GetKeyDown(dropKey))
         {
             if (currentHeldItem != null)
             {
                 DropItem();
-            }
-            else
-            {
-                AttemptPickup();
             }
         }
 
@@ -69,29 +77,59 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Пытается подобрать объект через рейкаст от позиции курсора.
-    /// Если объект имеет компонент InteractableObject с включённой возможностью подбора или реализует IUsable,
-    /// он прикрепляется к руке игрока.
+    /// Пытается подобрать объект через рейкаст.
+    /// Луч бросается из центра камеры (в направлении взгляда камеры).
+    /// Игрок игнорируется, а также используются столкновения с триггерами.
     /// </summary>
     private void AttemptPickup()
     {
+        // Луч из центра экрана
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
         RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out hit, interactRange))
+
+        // Используем QueryTriggerInteraction.Collide, чтобы луч получал столкновения с триггерами
+        if (Physics.Raycast(ray, out hit, interactRange, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide))
         {
-            // Если объект обладает компонентом InteractableObject и его можно подобрать
-            InteractableObject interactable = hit.collider.GetComponent<InteractableObject>();
-            if (interactable != null && interactable.IsPickupable)
+            // Игнорируем самого игрока, если он случайно попался в луч
+            if (hit.transform.gameObject == gameObject)
             {
-                PickupItem(interactable.gameObject);
                 return;
             }
-            
-            // Альтернативно, если объект реализует IUsable, считаем его подбираемым
-            IUsable usable = hit.collider.GetComponent<IUsable>();
-            if (usable != null)
+
+            // Если объект обладает компонентом InteractableObject и его можно подобрать
+            InteractableObject interactable = hit.collider.GetComponent<InteractableObject>();
+
+            //если не получилось получить по колайдеру, пытаемся получить по RigidBody
+            if (interactable == null && hit.rigidbody != null)
+                interactable = hit.rigidbody.GetComponent<InteractableObject>();
+
+            if (interactable != null)
             {
-                PickupItem(hit.collider.gameObject);
+                interactable.InteractByKey();
+                
+                if (interactable.IsPickupable)
+                {
+                    //если в руках нет объекта можем подобрать
+                    if (currentHeldItem == null)
+                    {
+                        PickupItem(interactable.gameObject);
+                        interactable.PickupItem();
+
+                        Debug.Log("Мы кликнули на " + interactable.name);
+                        return;
+                    }
+                }
+            }
+
+            //если в руках нет объекта можем подобрать
+            if (currentHeldItem == null)
+            {            // Альтернативно, если объект реализует IUsable, считаем его подбираемым
+                IUsable usable = hit.collider.GetComponent<IUsable>();
+                if (usable != null)
+                {
+                    Debug.Log("Мы кликнули на " + hit.collider.name);
+                    PickupItem(hit.collider.gameObject);
+                }
             }
         }
     }
@@ -118,7 +156,13 @@ public class Player : MonoBehaviour
         if (currentHeldItem != null)
         {
             currentHeldItem.transform.SetParent(null);
-            // Можно добавить физику выброса (например, силу)
+
+            if (currentHeldItem.TryGetComponent(out InteractableObject interactableObject))
+            {
+                interactableObject.DropItem();
+            }
+
+            // Дополнительно можно добавить импульс для "броска" предмета
             currentHeldItem = null;
         }
     }
@@ -128,4 +172,18 @@ public class Player : MonoBehaviour
         if (healthSystem == null)
             healthSystem = GetComponent<HealthSystem>();
     }
-} 
+
+    /// <summary>
+    /// Для проверки дальности взаимодействия рисуем линию-луч (грисмо)
+    /// от камеры в направлении её взгляда.
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        if (Camera.main != null)
+        {
+            Gizmos.color = Color.green;
+            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            Gizmos.DrawLine(ray.origin, ray.origin + ray.direction * interactRange);
+        }
+    }
+}
