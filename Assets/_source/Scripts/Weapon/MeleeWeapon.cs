@@ -12,7 +12,7 @@ public class MeleeWeapon : MonoBehaviour, IUsable
     [SerializeField] private float attackDistance = 1f;  // Расстояние от текущего трансформа, куда проводится атака
 
     [Header("Layer Settings")]
-    [SerializeField] private LayerMask attackLayers;     // Слой (или слои) для проверки попадания (например, враги)
+    [SerializeField] private LayerMask ignoreLayers;     // Слои, которые будут игнорироваться (остальные проверяются)
 
     [Header("Attack Event")]
     public UnityEvent OnAttack;                          // Событие, вызываемое после нанесения атаки
@@ -40,11 +40,11 @@ public class MeleeWeapon : MonoBehaviour, IUsable
         // Вычисляем центр сферы атаки: вперед от текущего трансформа
         Vector3 attackCenter = transform.position + transform.forward * attackDistance;
         
-        // Получаем все коллайдеры в заданной области
-        Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRadius, attackLayers);
+        // Получаем все коллайдеры в области атаки, игнорируя указанные слои (~ - побитовое отрицание)
+        Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRadius, ~ignoreLayers);
         foreach (Collider hit in hitColliders)
         {
-            // Исключаем атаку по игроку
+            // Если объект является игроком – можно продолжить игнорирование (если игрок не включён в ignoreLayers)
             if (Player.Instance != null && hit.gameObject == Player.Instance.gameObject)
                 continue;
 

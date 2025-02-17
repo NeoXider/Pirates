@@ -77,7 +77,18 @@ public class Player : MonoBehaviour
     /// </summary>
     public void RestartCurrentScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        int id = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(id);
+    }
+
+    /// <summary>
+    /// запускает следующую сцену.
+    /// </summary>
+    public void LoadNextScene()
+    {
+        int id = SceneManager.GetActiveScene().buildIndex + 1;
+        if(id < SceneManager.sceneCount)
+            SceneManager.LoadScene(id);
     }
 
     /// <summary>

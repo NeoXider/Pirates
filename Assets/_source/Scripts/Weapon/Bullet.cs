@@ -1,40 +1,58 @@
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : Trap
 {
     [Header("Bullet Settings")]
-    [SerializeField] private float damage = 15f;     // Урон патрона
-    [SerializeField] private float lifeTime = 5f;      // Время жизни патрона до автоматического уничтожения
+    [SerializeField] private bool dealDamage = true;         // Если false, пуля не наносит урон при столкновении.
+    
+    [SerializeField] private bool destroyOnDamage = true;      // Если true, пуля уничтожается после нанесения урона.
+    
+    [SerializeField] private float lifeTime = 5f;              // Время жизни пули до автоматического уничтожения.
+    [SerializeField] private Vector3 initialForce = Vector3.zero; // Сила, которая применяется к пуле при спавне.
 
     [Header("Impact Effects")]
-    [SerializeField] private GameObject impactEffectPrefab;  // Эффект при попадании (например, частицы)
+    [SerializeField] private GameObject impactEffectPrefab; // Эффект при столкновении (например, частицы)
+
+    private Rigidbody rb;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     private void Start()
     {
-        // Уничтожаем патрон через lifeTime секунд, чтобы избежать засорения сцены
+        // Применяем силу сразу при спавне (пуля сама к себе применяет силу)
+        if (rb != null && initialForce != Vector3.zero)
+        {
+            rb.AddForce(initialForce, ForceMode.Impulse);
+        }
+        
+        // Уничтожаем пулю спустя время, чтобы не засорять сцену
         Destroy(gameObject, lifeTime);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    protected override void OnCollisionEnter(Collision collision)
     {
-        // Не наносим урон игроку
-        if (Player.Instance != null && collision.gameObject == Player.Instance.gameObject)
-            return;
-
-        // Если у объекта есть система здоровья – наносим урон
-        HealthSystem health = collision.gameObject.GetComponent<HealthSystem>();
-        if (health != null)
+        if (dealDamage)
         {
-            health.TakeDamage(damage);
+            ApplyDamage(collision.collider);
         }
-
-        // Если задан эффект при попадании, создаем его в точке столкновения
-        if (impactEffectPrefab != null)
+        if (destroyOnDamage)
         {
-            Instantiate(impactEffectPrefab, transform.position, Quaternion.identity);
+            Destroy(gameObject);
         }
+    }
 
-        // Уничтожаем патрон после столкновения
-        Destroy(gameObject);
+    protected override void OnTriggerEnter(Collider other)
+    {
+        if (dealDamage)
+        {
+            ApplyDamage(other);
+        }
+        if (destroyOnDamage)
+        {
+            Destroy(gameObject);
+        }
     }
 } 
