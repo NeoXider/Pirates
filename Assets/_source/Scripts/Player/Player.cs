@@ -1,10 +1,13 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using KinematicCharacterController.Examples;
 
 [RequireComponent(typeof(HealthSystem))]
 public class Player : MonoBehaviour
 {
     public static Player Instance { get; private set; }
+
+    public ExamplePlayer examplePlayer;
 
     public HealthSystem healthSystem;
 
@@ -25,6 +28,7 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private GameObject currentHeldItem;
+
 
     private void Awake()
     {
@@ -169,8 +173,9 @@ public class Player : MonoBehaviour
 
     private void OnValidate()
     {
-        if (healthSystem == null)
-            healthSystem = GetComponent<HealthSystem>();
+        healthSystem ??= GetComponent<HealthSystem>();
+
+        examplePlayer ??= FindObjectOfType<ExamplePlayer>();
     }
 
     /// <summary>

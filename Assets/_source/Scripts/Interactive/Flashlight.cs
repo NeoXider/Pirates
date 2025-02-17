@@ -1,36 +1,22 @@
 using UnityEngine;
 
-public class Flashlight : MonoBehaviour, IUsable
+public class Flashlight : ToggleInteractive, IUsable
 {
     [SerializeField]
-    private GameObject[] lightObjects; // Объекты, отвечающий за освещение (например, компонент Light)
+    private GameObject[] lightObjects; // Объекты, отвечающие за освещение (например, компонент Light)
 
-    public bool isOn = false;
-
-    private void Start()
+    public override void Activate(bool activate)
     {
-        Activate(isOn);
-    }
+        base.Activate(activate);
 
-    private void Activate(bool activate)
-    {
         for (int i = 0; i < lightObjects.Length; i++)
         {
             lightObjects[i].SetActive(activate);
         }
     }
 
-    /// <summary>
-    /// Переключает состояние фонарика (включение/выключение).
-    /// </summary>
     public void Use()
     {
-        isOn = !isOn;
-        Activate(isOn);
+        Toggle();
     }
-
-    void OnValidate()
-    {
-        Activate(isOn);
-    }
-} 
+}

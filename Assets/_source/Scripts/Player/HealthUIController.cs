@@ -3,10 +3,6 @@ using UnityEngine.UI;
 
 public class HealthUIController : MonoBehaviour
 {
-    [Header("Ссылка на систему здоровья")]
-    [SerializeField]
-    private HealthSystem healthSystem;
-
     [Header("UI элементы для отображения здоровья")]
     [SerializeField]
     private Slider healthSlider;
