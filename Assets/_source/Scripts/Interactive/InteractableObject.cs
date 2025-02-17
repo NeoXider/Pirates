@@ -13,6 +13,9 @@ public class InteractableObject : MonoBehaviour
     [Tooltip("Включить взаимодействие по нажатию клавиши.")]
     [SerializeField] private bool interactByKey = true;
 
+    [Tooltip("Взаимодействовать только с игроком.")]
+    [SerializeField] private bool interactWithPlayer = true;
+
     [Header("Events")]
     [Tooltip("Событие, вызываемое при взаимодействии по нажатию клавиши.")]
     public UnityEvent OnPress;
@@ -51,12 +54,23 @@ public class InteractableObject : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Contact();
+        if (!interactWithPlayer || interactWithPlayer && IsPlayer(other))
+        {
+            Contact();
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        Contact();
+        if (!interactWithPlayer || interactWithPlayer && IsPlayer(collision.collider))
+        {
+            Contact();
+        }
+    }
+
+    private bool IsPlayer(Collider other)
+    {
+        return other.gameObject.GetComponent<Player>() != null;
     }
 
     /// <summary>
