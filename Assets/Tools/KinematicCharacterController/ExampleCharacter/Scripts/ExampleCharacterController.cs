@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using KinematicCharacterController;
 using System;
+using UnityEngine.Events;
 
 namespace KinematicCharacterController.Examples
 {
@@ -72,6 +73,7 @@ namespace KinematicCharacterController.Examples
         public float CrouchedCapsuleHeight = 1f;
 
         public CharacterState CurrentCharacterState { get; private set; }
+        public UnityEvent OnJump;
 
         private Collider[] _probedColliders = new Collider[8];
         private RaycastHit[] _probedHits = new RaycastHit[8];
@@ -507,6 +509,7 @@ namespace KinematicCharacterController.Examples
 
         protected void OnLeaveStableGround()
         {
+            OnJump?.Invoke();
         }
 
         public void OnDiscreteCollisionDetected(Collider hitCollider)

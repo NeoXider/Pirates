@@ -101,9 +101,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 25
-  attackDelay: 0.3
-  cooldown: 3
-  attackRadius: 3.5
+  attackDelay: 0.8
+  cooldown: 1
+  attackRadius: 4.5
   attackDistance: 0.5
   ignoreLayers:
     serializedVersion: 2

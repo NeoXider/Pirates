@@ -366,7 +366,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2867841092813246696}
-  - component: {fileID: 2435180060095785728}
   - component: {fileID: 7867918689352172445}
   - component: {fileID: 5959942710310805164}
   m_Layer: 0
@@ -395,39 +394,6 @@ Transform:
   - {fileID: 6246578466387978413}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2435180060095785728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3537343895318225665}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79e8c67f85836614b8ca4ff89508ce69, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isPickupable: 0
-  interactByKey: 1
-  interactWithPlayer: 1
-  OnPress:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7867918689352172445}
-        m_TargetAssemblyTypeName: ToggleInteractive, Assembly-CSharp
-        m_MethodName: Toggle
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnContact:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &7867918689352172445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -440,6 +406,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17ed4f117630a794594f347a9d934296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPickupable: 0
+  interactByKey: 1
+  isContactable: 1
+  interactWithPlayer: 1
+  OnPress:
+    m_PersistentCalls:
+      m_Calls: []
+  OnContact:
+    m_PersistentCalls:
+      m_Calls: []
+  setBoolOnAwake: 0
   isOn: 1
   OnChanged:
     m_PersistentCalls:

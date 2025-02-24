@@ -11,6 +11,15 @@ namespace KinematicCharacterController.Examples
         public ExampleCharacterController Character;
         public ExampleCharacterCamera CharacterCamera;
 
+        [SerializeField]
+        private float moveSpeed = 8;
+
+        [SerializeField]
+        private float runSpeed = 16;
+
+        [SerializeField]
+        private bool canCrouch = false;
+
         private const string MouseXInput = "Mouse X";
         private const string MouseYInput = "Mouse Y";
         private const string MouseScrollInput = "Mouse ScrollWheel";
@@ -27,6 +36,13 @@ namespace KinematicCharacterController.Examples
             // Ignore the character's collider(s) for camera obstruction checks
             CharacterCamera.IgnoredColliders.Clear();
             CharacterCamera.IgnoredColliders.AddRange(Character.GetComponentsInChildren<Collider>());
+
+            SetSpeed(false);
+        }
+
+        private void SetSpeed(bool run)
+        {
+            Character.MaxStableMoveSpeed = run? runSpeed : moveSpeed;
         }
 
         private void Update()
@@ -89,8 +105,14 @@ namespace KinematicCharacterController.Examples
             characterInputs.MoveAxisRight = Input.GetAxisRaw(HorizontalInput);
             characterInputs.CameraRotation = CharacterCamera.Transform.rotation;
             characterInputs.JumpDown = Input.GetKeyDown(KeyCode.Space);
-            characterInputs.CrouchDown = Input.GetKeyDown(KeyCode.C);
-            characterInputs.CrouchUp = Input.GetKeyUp(KeyCode.C);
+
+            if (canCrouch)
+            {
+                characterInputs.CrouchDown = Input.GetKeyDown(KeyCode.C);
+                characterInputs.CrouchUp = Input.GetKeyUp(KeyCode.C);
+            }
+
+            SetSpeed(Input.GetKey(KeyCode.LeftShift));
 
             // Apply inputs to character
             Character.SetInputs(ref characterInputs);
