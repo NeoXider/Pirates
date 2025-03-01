@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 [AddComponentMenu("_Neoxider/" + "UI/" + nameof(HealthUIController))]
 public class HealthUIController : MonoBehaviour
@@ -12,7 +13,7 @@ public class HealthUIController : MonoBehaviour
     private Image healthFillImage;
 
     [SerializeField]
-    private Text healthText;
+    private TMP_Text healthText;
 
     private void Start()
     {

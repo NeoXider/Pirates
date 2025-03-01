@@ -1,4 +1,7 @@
 using UnityEngine;
+using System;
+using System.Collections;
+using Random = UnityEngine.Random;
 
 [AddComponentMenu("_Neoxider/"+ nameof(Spawner))]
 public class Spawner : MonoBehaviour
@@ -14,8 +17,22 @@ public class Spawner : MonoBehaviour
     [SerializeField]
     private int spawnQuantity = 1;           // Количество снарядов для спавна (по умолчанию 1)
 
+    [Tooltip("Задержка")]
+    [SerializeField]
+    private float delaySpawn = 0;           // Количество снарядов для спавна (по умолчанию 1)
+
     [Tooltip("Спавнить снаряды внутри выбранного Transform.")]
     public bool spawnInsideTransform = false;
+
+    public bool playInAwake = true;
+
+    public void Awake()
+    {
+        if(playInAwake)
+        {
+            Spawn();
+        }
+    }
 
     /// <summary>
     /// Спавнит снаряды.
@@ -23,6 +40,11 @@ public class Spawner : MonoBehaviour
     /// иначе если задан spawnPoint, он используется, а если и он не задан – используется позиция самого спавнера.
     /// </summary>
     public void Spawn()
+    {
+        StartCoroutine(SpawnCoroutine());
+    }
+
+    private IEnumerator SpawnCoroutine()
     {
         for (int i = 0; i < spawnQuantity; i++)
         {
@@ -34,6 +56,8 @@ public class Spawner : MonoBehaviour
 
             // Спавним снаряд. Сам снаряд добавляет силу в Start.
             Instantiate(projectilePrefab, spawnPos, spawnRot, spawnInsideTransform ? spawnTransform : null);
+
+            yield return new WaitForSeconds(delaySpawn);
         }
     }
 }

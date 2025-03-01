@@ -11,7 +11,7 @@ public class Money : MonoBehaviour
     public float money => _money;
     public float allMoney => _allMoney;
 
-    [SerializeField] private float _money;
+    private float _money;
     [SerializeField] private float _levelMoney;
 
     [SerializeField] private string _moneySave = "Money";

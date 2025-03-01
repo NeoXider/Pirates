@@ -11,6 +11,15 @@ public class CursorManager : MonoBehaviour
         Cursor.visible = true;
     }
 
+    void Update()
+    {
+        Player.Instance.examplePlayer.enabled = false;
+        // Включаем курсор и делаем его видимым
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+
     void OnDisable()
     {
         Player.Instance.examplePlayer.enabled = true;

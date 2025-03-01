@@ -4,9 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [AddComponentMenu("_Neoxider/" + "Interactive/" + nameof(Coin))]
-public class Coin : MonoBehaviour
+public class Coin : InteractableObject
 {
-    [SerializeField] private InteractableObject interactableObject;
     [SerializeField] private bool destroyOnTake = true;
     public int amount = 1;
 
@@ -16,12 +15,14 @@ public class Coin : MonoBehaviour
 
     void OnEnable()
     {
-        interactableObject.OnContact.AddListener(Take);
+        OnContact.AddListener(Take);
+        OnPress.AddListener(Take);
     }
 
     void OnDisable()
     {
-        interactableObject.OnContact.RemoveListener(Take);
+        OnContact.RemoveListener(Take);
+        OnPress.RemoveListener(Take);
     }
 
     public void Take()
@@ -45,6 +46,6 @@ public class Coin : MonoBehaviour
 
     void OnValidate()
     {
-        interactableObject ??= GetComponent<InteractableObject>();
+
     }
 }

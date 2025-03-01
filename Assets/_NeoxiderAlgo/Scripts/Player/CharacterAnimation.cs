@@ -23,10 +23,17 @@ public class CharacterAnimation : MonoBehaviour
     [SerializeField]
     private string runSpeed = "runSpeed";
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    private KinematicCharacterController.Examples.ExampleCharacterController controller;
 
+    void Awake()
+    {
+        controller = FindObjectOfType<KinematicCharacterController.Examples.ExampleCharacterController>();
+        controller.OnJump.AddListener(Jump);
+    }
+
+    private void OnDestroy()
+    {
+        controller.OnJump.RemoveListener(Jump);
     }
 
     // Update is called once per frame
@@ -34,6 +41,11 @@ public class CharacterAnimation : MonoBehaviour
     {
         animator.SetFloat(moveXFloat, Input.GetAxis("Horizontal"));
         animator.SetFloat(moveYFloat, Input.GetAxis("Vertical"));
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            Attack();
+        }
     }
 
     public void Jump()

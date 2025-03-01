@@ -23,7 +23,7 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 0.1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 0c56b35a6d7bad544a5b576592b6e51e, type: 2}
@@ -162686,7 +162686,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 827960a7a7276bd409a6832912ae13f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactableObject: {fileID: 1462378355902059129}
+  isPickupable: 0
+  interactByKey: 1
+  isContactable: 1
+  interactWithPlayer: 1
+  OnPress:
+    m_PersistentCalls:
+      m_Calls: []
+  OnContact:
+    m_PersistentCalls:
+      m_Calls: []
   destroyOnTake: 1
   amount: 990
   levelMoney: 1

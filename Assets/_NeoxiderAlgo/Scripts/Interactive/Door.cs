@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [AddComponentMenu("_Neoxider/" + "Interactive/" + nameof(Door))]
-public class Door : MonoBehaviour
+public class Door : InteractableObject
 {
     public Animator animator;
     public string boolName = "Open";
@@ -11,7 +11,13 @@ public class Door : MonoBehaviour
 
     void Start()
     {
+        OnPress.AddListener(ToggleDoor);
         animator.SetBool(boolName, isOn);
+    }
+
+    private void OnDestroy()
+    {
+        OnPress.RemoveListener(ToggleDoor);
     }
 
     public void ToggleDoor()

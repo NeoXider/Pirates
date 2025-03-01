@@ -4,14 +4,15 @@ using UnityEngine.Events;
 
 [AddComponentMenu("_Neoxider/" + "Weapon/" + nameof(MeleeWeapon))]
 
-public class MeleeWeapon : MonoBehaviour, IUsable
+public class MeleeWeapon : InteractableObject, IUsable
 {
+    [Space]
     [Header("Attack Settings")]
     [SerializeField] private float damage = 25f;
     [SerializeField] private float attackDelay = 0.3f; // Задержка перед атакой
     [SerializeField] private float cooldown = 2f;      // Перезарядка между атаками
     [SerializeField] private float attackRadius = 1f;    // Радиус эффекта атаки
-    [SerializeField] private float attackDistance = 1f;  // Расстояние от текущего трансформа, куда проводится атака
+    [SerializeField] private Vector3 offset;  // Расстояние от текущего трансформа, куда проводится атака
 
     [Header("Layer Settings")]
     [SerializeField] private LayerMask ignoreLayers;     // Слои, которые будут игнорироваться (остальные проверяются)
@@ -20,6 +21,16 @@ public class MeleeWeapon : MonoBehaviour, IUsable
     public UnityEvent OnAttack;                          // Событие, вызываемое после нанесения атаки
 
     private bool isAttacking = false;
+
+    private void Start()
+    {
+        OnPress.AddListener(Use);
+    }
+
+    private void OnDestroy()
+    {
+        OnPress.RemoveListener(Use);
+    }
 
     /// <summary>
     /// Метод использования (удар) оружием ближнего боя.
@@ -40,7 +51,7 @@ public class MeleeWeapon : MonoBehaviour, IUsable
         yield return new WaitForSeconds(attackDelay);
 
         // Вычисляем центр сферы атаки: вперед от текущего трансформа
-        Vector3 attackCenter = transform.position + transform.forward * attackDistance;
+        Vector3 attackCenter = transform.position + offset;
         
         // Получаем все коллайдеры в области атаки, игнорируя указанные слои (~ - побитовое отрицание)
         Collider[] hitColliders = Physics.OverlapSphere(attackCenter, attackRadius, ~ignoreLayers);
@@ -69,7 +80,7 @@ public class MeleeWeapon : MonoBehaviour, IUsable
     // Для отладки в редакторе рисуем сферу атаки
     private void OnDrawGizmosSelected()
     {
-        Vector3 attackCenter = transform.position + transform.forward * attackDistance;
+        Vector3 attackCenter = transform.position + offset;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackCenter, attackRadius);
     }

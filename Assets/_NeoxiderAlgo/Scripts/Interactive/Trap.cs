@@ -14,6 +14,7 @@ public class Trap : MonoBehaviour
     /// </summary>
     protected virtual void ApplyDamage(Collider other)
     {
+        print(other.gameObject.name);
         HealthSystem health = other.GetComponent<HealthSystem>();
         if (health != null)
         {

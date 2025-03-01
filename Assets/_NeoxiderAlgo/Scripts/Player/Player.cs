@@ -161,6 +161,7 @@ public class Player : MonoBehaviour
                 {
                     Debug.Log("Подобрали " + hit.collider.name);
                     PickupItem(hit.collider.gameObject);
+                    interactable.PickupItem();
                     return true;
                 }
             }
@@ -176,6 +177,7 @@ public class Player : MonoBehaviour
     {
         if (handTransform != null)
         {
+            print("подобрали "+ item.name);
             item.transform.SetParent(handTransform);
             item.transform.localPosition = Vector3.zero;
             item.transform.localRotation = Quaternion.identity;

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Flashlight : ToggleInteractive, IUsable
 {
     [SerializeField]
-    private GameObject[] lightObjects; // Объекты, отвечающие за освещение (например, компонент Light)
+    private GameObject[] lightObjects = new GameObject[0]; // Объекты, отвечающие за освещение (например, компонент Light)
 
     public override void Activate(bool activate)
     {
